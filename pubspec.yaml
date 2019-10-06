@@ -1,11 +1,11 @@
 name: alphabet_list_scroll_view
 description: A new flutter plugin project.
-version: 0.0.1
+version: 0.1.0
 author: Liew Jun Tung <liewjuntung@gmail.com>
 homepage: https://github.com/LiewJunTung/alphabet_list_scroll_view
 
 environment:
-  sdk: ">=2.1.0 <3.0.0"
+  sdk: ">=2.2.2 <3.0.0"
 
 dependencies:
   flutter:

@@ -43,6 +43,8 @@ class _MainAppState extends State<MainApp> {
     "Dog, raccoon",
     "Wild turkey",
     "Common ringtail",
+    "123",
+    "诸葛亮"
   ];
 
   @override
@@ -54,6 +56,8 @@ class _MainAppState extends State<MainApp> {
       ),
       body: AlphabetListScrollView(
         strList: strList,
+        highlightTextStyle: TextStyle(color: Colors.green,),
+        showPreview: true,
         itemBuilder: (context, index){
           return ListTile(
               title: Text(strList[index]),
