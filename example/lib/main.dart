@@ -52,7 +52,7 @@ class _MainAppState extends State<MainApp> {
       appBar: AppBar(
         title: const Text('Plugin example app'),
       ),
-      body: AlphabetList(
+      body: AlphabetListScrollView(
         strList: strList,
         itemBuilder: (context, index){
           return ListTile(

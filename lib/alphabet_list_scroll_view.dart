@@ -4,17 +4,17 @@ import 'package:vibration/vibration.dart';
 import 'package:scroll_to_index/scroll_to_index.dart';
 
 
-class AlphabetList extends StatefulWidget {
+class AlphabetListScrollView extends StatefulWidget {
   final List<String> strList;
   final IndexedWidgetBuilder itemBuilder;
 
-  const AlphabetList({Key key, this.strList, this.itemBuilder}) : super(key: key);
+  const AlphabetListScrollView({Key key, this.strList, this.itemBuilder}) : super(key: key);
 
   @override
-  _AlphabetListState createState() => _AlphabetListState();
+  _AlphabetListScrollViewState createState() => _AlphabetListScrollViewState();
 }
 
-class _AlphabetListState extends State<AlphabetList> {
+class _AlphabetListScrollViewState extends State<AlphabetListScrollView> {
   List<String> alphabetList = [];
 
   var controller = AutoScrollController();
