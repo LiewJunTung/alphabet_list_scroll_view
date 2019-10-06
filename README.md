@@ -1,5 +1,5 @@
 # Alphabet List Scroll View
-
+A customizable listview with A-Z side scrollbar to fast jump to the item of the selected character.
 Quick scroll through list via dragging through alphabets. 
 
 ## API

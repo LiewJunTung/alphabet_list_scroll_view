@@ -200,7 +200,6 @@ class _AlphabetListScrollViewState extends State<AlphabetListScrollView> {
                           selectedIndex >= 0
                               ? "${alphabetList[selectedIndex]}"
                               : "",
-//                    alphabetList[selectedIndex],
                           style: TextStyle(
                             color: Colors.white,
                             fontSize: 60,

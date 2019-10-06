@@ -1,5 +1,5 @@
-import 'package:flutter/material.dart';
 import 'package:alphabet_list_scroll_view/alphabet_list_scroll_view.dart';
+import 'package:flutter/material.dart';
 
 void main() => runApp(MainApp());
 
@@ -51,20 +51,22 @@ class _MainAppState extends State<MainApp> {
   Widget build(BuildContext context) {
     return MaterialApp(
         home: Scaffold(
-      appBar: AppBar(
-        title: const Text('Plugin example app'),
-      ),
-      body: AlphabetListScrollView(
-        strList: strList,
-        highlightTextStyle: TextStyle(color: Colors.green,),
-        showPreview: true,
-        itemBuilder: (context, index){
-          return ListTile(
-              title: Text(strList[index]),
-              subtitle: Text(strList[index][0]),
-          );
-        },
-      ),
-    ));
+          appBar: AppBar(
+            title: const Text('Plugin example app'),
+          ),
+          body: AlphabetListScrollView(
+            strList: strList,
+            highlightTextStyle: TextStyle(
+              color: Colors.green,
+            ),
+            showPreview: true,
+            itemBuilder: (context, index) {
+              return ListTile(
+                title: Text(strList[index]),
+                subtitle: Text(strList[index][0]),
+              );
+            },
+          ),
+        ));
   }
 }
