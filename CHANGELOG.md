@@ -1,3 +1,8 @@
+## 0.1.1
+
+* Fixed preview
+
+
 ## 0.1.0
 
 * Added a few options such as: strList, itemBuilder, highlightTextStyle

@@ -196,7 +196,7 @@ class _AlphabetListScrollViewState extends State<AlphabetListScrollView> {
                   height: 160,
                   color: Colors.black54,
                   child: Center(
-                      child: Text(selectedIndex > 0? "${alphabetList[selectedIndex]}" : "",
+                      child: Text(selectedIndex >= 0? "${alphabetList[selectedIndex]}" : "",
 //                    alphabetList[selectedIndex],
                     style: TextStyle(
                       color: Colors.white,
