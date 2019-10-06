@@ -185,28 +185,31 @@ class _AlphabetListScrollViewState extends State<AlphabetListScrollView> {
             },
           ),
           if (widget.showPreview)
-          AnimatedOpacity(
-            opacity: _visible ? 1.0 : 0.0,
-            duration: Duration(milliseconds: 500),
-            child: Center(
-              child: ClipRRect(
-                borderRadius: BorderRadius.all(Radius.circular(30)),
-                child: Container(
-                  width: 160,
-                  height: 160,
-                  color: Colors.black54,
-                  child: Center(
-                      child: Text(selectedIndex >= 0? "${alphabetList[selectedIndex]}" : "",
+            AnimatedOpacity(
+              opacity: _visible ? 1.0 : 0.0,
+              duration: Duration(milliseconds: 500),
+              child: Center(
+                child: ClipRRect(
+                  borderRadius: BorderRadius.all(Radius.circular(30)),
+                  child: Container(
+                    width: 160,
+                    height: 160,
+                    color: Colors.black54,
+                    child: Center(
+                        child: Text(
+                          selectedIndex >= 0
+                              ? "${alphabetList[selectedIndex]}"
+                              : "",
 //                    alphabetList[selectedIndex],
-                    style: TextStyle(
-                      color: Colors.white,
-                      fontSize: 60,
-                    ),
-                  )),
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontSize: 60,
+                          ),
+                        )),
+                  ),
                 ),
               ),
             ),
-          ),
           _AlphabetListScollView(
             insideKey: _sideKey,
             strList: alphabetList,
