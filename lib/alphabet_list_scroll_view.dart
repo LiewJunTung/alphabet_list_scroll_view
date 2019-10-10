@@ -1,24 +1,29 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
-import 'package:scroll_to_index/scroll_to_index.dart';
+import 'package:rxdart/rxdart.dart';
 import 'package:vibration/vibration.dart';
+
+typedef IndexedHeight = double Function(int);
 
 class AlphabetListScrollView extends StatefulWidget {
   final List<String> strList;
+  final IndexedHeight indexedHeight;
   final IndexedWidgetBuilder itemBuilder;
   final TextStyle highlightTextStyle;
   final TextStyle normalTextStyle;
   final bool showPreview;
+  final bool hasSearch;
 
-  const AlphabetListScrollView({
-    Key key,
+  const AlphabetListScrollView({Key key,
     @required this.strList,
     this.itemBuilder,
     this.highlightTextStyle = const TextStyle(color: Colors.red),
     this.normalTextStyle = const TextStyle(color: Colors.black),
     this.showPreview = false,
-  }) : super(key: key);
+    this.hasSearch = false,
+    @required this.indexedHeight})
+      : super(key: key);
 
   @override
   _AlphabetListScrollViewState createState() => _AlphabetListScrollViewState();
@@ -27,51 +32,73 @@ class AlphabetListScrollView extends StatefulWidget {
 class _AlphabetListScrollViewState extends State<AlphabetListScrollView> {
   List<String> alphabetList = [];
 
-  var controller = AutoScrollController();
+  var controller = ScrollController();
   VoidCallback _callback;
+  GlobalKey _screenKey = GlobalKey();
   GlobalKey _mainKey = GlobalKey();
   GlobalKey _sideKey = GlobalKey();
-  double alphabetHeight = 0;
+  double screenHeight = 0;
   double sideHeight = 0;
   int selectedIndex = 0;
+  String selectedChar = "A";
   Map<String, int> strMap = {};
+  Map<String, double> heightMap = {};
   int savedIndex = 0;
   bool isXFlag = false;
   Timer _debounce;
   bool _visible = false;
+  final _pixelUpdates = StreamController<double>();
+  var totalHeight = 0.0;
+  var heightList = <double>[];
+  double maxLimit = 0;
+
+  _initScrollCallback() {
+    Observable(_pixelUpdates.stream)
+        .listen((pixels) {
+      var tempSelectedIndex = ((pixels / controller.position.maxScrollExtent) *
+          widget.strList.length).toInt();
+      if (tempSelectedIndex >= widget.strList.length) {
+        tempSelectedIndex = widget.strList.length - 1;
+      }
+      var mapKey = widget.strList[tempSelectedIndex][0].toUpperCase();
+      if (tempSelectedIndex != selectedIndex && selectedChar != mapKey) {
+        var tempIndex = alphabetList.indexOf(mapKey);
+
+        if (tempIndex != -1) {
+          setState(() {
+            selectedIndex = tempIndex;
+            selectedChar = mapKey;
+          });
+        }
+      }
+    });
+  }
 
   @override
   void initState() {
     _initList();
     WidgetsBinding.instance.addPostFrameCallback(_afterLayout);
     super.initState();
+    _initScrollCallback();
     _callback = () {
-      if (isXFlag) {
-        return;
-      }
-      var pixels = controller.position.pixels;
-      var tempSelectedIndex = ((pixels / controller.position.maxScrollExtent) *
-              widget.strList.length)
-          .toInt();
-      if (tempSelectedIndex >= 0 && tempSelectedIndex < widget.strList.length) {
-        var mapKey = widget.strList[tempSelectedIndex][0].toUpperCase();
-
-        setState(() {
-          selectedIndex = alphabetList.indexOf(mapKey);
-        });
-      }
-      isXFlag = false;
+      _pixelUpdates.add(controller.position.pixels);
     };
     controller.addListener(_callback);
   }
 
+
   _afterLayout(_) {
-    _getSizes();
+    _getScreenHeight();
     _getSideSizes();
+    var maxLimit = totalHeight - screenHeight;
+    heightMap.forEach((k, v) {
+      if (v > maxLimit) {
+        heightMap[k] = maxLimit;
+      }
+    });
   }
 
   _initList() {
-    String currentAlphabet = "";
     var tempList = widget.strList;
     tempList.sort();
     tempList.sort((a, b) {
@@ -90,17 +117,32 @@ class _AlphabetListScrollViewState extends State<AlphabetListScrollView> {
     });
     for (var i = 0; i < tempList.length; i++) {
       var currentStr = tempList[i][0];
-      if (currentStr.codeUnitAt(0) < 65 || currentStr.codeUnitAt(0) > 122) {
-        strMap["#"] = i;
-        alphabetList.add("#");
-        currentAlphabet = "#";
-        break;
-      } else if (currentAlphabet != currentStr) {
-        strMap[currentStr] = i;
-        alphabetList.add(currentStr);
-        currentAlphabet = currentStr;
-      }
+      _initAlphabetMap(currentStr, i);
     }
+  }
+
+
+  String _currentAlphabet = "";
+
+  _initAlphabetMap(String currentStr, int i) {
+    var currentHeight = widget.indexedHeight(i);
+    if (_currentAlphabet == "#") {
+      return;
+    }
+
+    if (currentStr.codeUnitAt(0) < 65 ||
+        currentStr.codeUnitAt(0) > 122) {
+      strMap["#"] = i;
+      alphabetList.add("#");
+      _currentAlphabet = "#";
+      heightMap["#"] = totalHeight;
+    } else if (_currentAlphabet != currentStr) {
+      strMap[currentStr] = i;
+      alphabetList.add(currentStr);
+      _currentAlphabet = currentStr;
+      heightMap[currentStr] = totalHeight;
+    }
+    totalHeight += currentHeight;
   }
 
   _getSideSizes() {
@@ -109,11 +151,12 @@ class _AlphabetListScrollViewState extends State<AlphabetListScrollView> {
     sideHeight = sizeRed.height;
   }
 
-  _getSizes() {
+  _getScreenHeight() {
     final RenderBox renderBoxRed = _mainKey.currentContext.findRenderObject();
     final sizeRed = renderBoxRed.size;
-    alphabetHeight = sizeRed.height;
+    screenHeight = sizeRed.height;
   }
+
 
   _currentWidgetIndex(double position) {
     var tempPosition = position;
@@ -152,10 +195,12 @@ class _AlphabetListScrollViewState extends State<AlphabetListScrollView> {
     if (await Vibration.hasVibrator()) {
       Vibration.vibrate(duration: 20);
     }
-    controller.scrollToIndex(
-      strMap[alphabetList[index]],
-      duration: Duration(milliseconds: 1),
-    );
+    var height = heightMap[alphabetList[index]];
+    controller.jumpTo(height);
+//    controller.scrollToIndex(
+//      strMap[alphabetList[index]],
+//      duration: Duration(milliseconds: 1),
+//    );
   }
 
   @override
@@ -166,7 +211,12 @@ class _AlphabetListScrollViewState extends State<AlphabetListScrollView> {
 
   @override
   Widget build(BuildContext context) {
+    var itemLength = widget.strList.length;
+    if (widget.hasSearch) {
+      itemLength += 1;
+    }
     return Container(
+      key: _screenKey,
       child: Stack(
         children: <Widget>[
           ListView.builder(
@@ -174,13 +224,10 @@ class _AlphabetListScrollViewState extends State<AlphabetListScrollView> {
             controller: controller,
             itemCount: widget.strList.length,
             itemBuilder: (context, index) {
-              return AutoScrollTag(
-                key: ValueKey(widget.strList[index]),
-                controller: controller,
-                index: index,
-                child: Container(
-                  child: widget.itemBuilder(context, index),
-                ),
+              var currentIndex = index;
+              return Container(
+                height: widget.indexedHeight(index),
+                child: widget.itemBuilder(context, currentIndex),
               );
             },
           ),
