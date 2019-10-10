@@ -1,3 +1,8 @@
+## 1.0.0
+* Massively improve performance
+* Removed unnecessary dependencies
+
+
 ## 0.1.5
 * Formatted code
 * Fixed preview

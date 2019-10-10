@@ -10,6 +10,7 @@ Quick scroll through list via dragging through alphabets.
 | highlightTextStyle | bool | false | highlight the focused pin box. |
 | normalTextStyle | Color | Colors.black | Set color of the focused pin box. |
 | showPreview | bool | Colors.black | Set color of the focused pin box. |
+| indexedHeight | double Function(int) | query the height of widget with index |  |
 
 <img src="https://github.com/LiewJunTung/alphabet_list_scroll_view/blob/master/images/preview.gif?raw=true" alt="drawing" width="300"/>
 <img src="https://github.com/LiewJunTung/alphabet_list_scroll_view/blob/master/images/device-2019-10-06-171039.png?raw=true" alt="drawing" width="300"/>

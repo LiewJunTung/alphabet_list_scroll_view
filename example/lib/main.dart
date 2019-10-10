@@ -47,8 +47,10 @@ class _MainAppState extends State<MainApp> {
     "诸葛亮"
   ];
 
+
   @override
   Widget build(BuildContext context) {
+    var currentStr = "";
     return MaterialApp(
         home: Scaffold(
           appBar: AppBar(
@@ -65,6 +67,9 @@ class _MainAppState extends State<MainApp> {
                 title: Text(strList[index]),
                 subtitle: Text(strList[index][0]),
               );
+            },
+            indexedHeight: (i) {
+              return 80;
             },
           ),
         ));
