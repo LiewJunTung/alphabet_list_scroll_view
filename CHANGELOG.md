@@ -1,3 +1,6 @@
+## 1.0.1
+* Added headers
+
 ## 1.0.0
 * Massively improve performance
 * Removed unnecessary dependencies
