@@ -1,6 +1,7 @@
 import 'package:alphabet_list_scroll_view/alphabet_list_scroll_view.dart';
 import 'package:faker/faker.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_slidable/flutter_slidable.dart';
 
 void main() => runApp(MainApp());
 
@@ -58,37 +59,73 @@ class _MainAppState extends State<MainApp> {
     users.forEach((user) {
       if (user.favourite) {
         favouriteList.add(
-          ListTile(
-            leading: Stack(
-              children: <Widget>[
-                CircleAvatar(
-                  backgroundImage:
-                  NetworkImage("http://placeimg.com/200/200/people"),
-                ),
-                Container(
-                    height: 40,
-                    width: 40,
-                    child: Center(
-                      child: Icon(
-                        Icons.star,
-                        color: Colors.yellow[100],
-                      ),
-                    ))
-              ],
+          Slidable(
+            actionPane: SlidableDrawerActionPane(),
+            actionExtentRatio: 0.25,
+            secondaryActions: <Widget>[
+              IconSlideAction(
+                iconWidget: Icon(Icons.star),
+                onTap: () {
+
+                },
+              ),
+              IconSlideAction(
+                iconWidget: Icon(Icons.more_horiz),
+                onTap: () {
+
+                },
+              ),
+            ],
+            child: ListTile(
+              leading: Stack(
+                children: <Widget>[
+                  CircleAvatar(
+                    backgroundImage:
+                    NetworkImage("http://placeimg.com/200/200/people"),
+                  ),
+                  Container(
+                      height: 40,
+                      width: 40,
+                      child: Center(
+                        child: Icon(
+                          Icons.star,
+                          color: Colors.yellow[100],
+                        ),
+                      ))
+                ],
+              ),
+              title: Text(user.name),
+              subtitle: Text(user.company),
             ),
-            title: Text(user.name),
-            subtitle: Text(user.company),
           ),
         );
       } else {
         normalList.add(
-          ListTile(
-            leading: CircleAvatar(
-              backgroundImage:
-              NetworkImage("http://placeimg.com/200/200/people"),
+          Slidable(
+            actionPane: SlidableDrawerActionPane(),
+            actionExtentRatio: 0.25,
+            secondaryActions: <Widget>[
+              IconSlideAction(
+                iconWidget: Icon(Icons.star),
+                onTap: () {
+
+                },
+              ),
+              IconSlideAction(
+                iconWidget: Icon(Icons.more_horiz),
+                onTap: () {
+
+                },
+              ),
+            ],
+            child: ListTile(
+              leading: CircleAvatar(
+                backgroundImage:
+                NetworkImage("http://placeimg.com/200/200/people"),
+              ),
+              title: Text(user.name),
+              subtitle: Text(user.company),
             ),
-            title: Text(user.name),
-            subtitle: Text(user.company),
           ),
         );
         strList.add(user.name);

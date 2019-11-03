@@ -473,23 +473,25 @@ class _AlphabetListScollViewState extends State<_AlphabetListScollView> {
       mainAxisAlignment: MainAxisAlignment.end,
       children: <Widget>[
         Center(
-          child: GestureDetector(
-            onPanStart: (details) {
-              widget.positionCallback(details.localPosition.dy);
-            },
-            onPanUpdate: (details) {
-              widget.positionCallback(details.localPosition.dy);
-            },
-            onTapDown: (details) {
-              widget.positionCallback(details.localPosition.dy);
-            },
-            child: Container(
-              color: Colors.transparent,
-              key: widget.insideKey,
-              child: Padding(
-                padding: const EdgeInsets.all(24.0),
-                child: _column(),
-              ),
+          child: Container(
+            key: widget.insideKey,
+            child: Padding(
+              padding: const EdgeInsets.all(24.0),
+              child: GestureDetector(
+                  behavior: HitTestBehavior.translucent,
+                  onPanStart: (details) {
+                    print(details);
+                    widget.positionCallback(details.localPosition.dy);
+                  },
+                  onPanUpdate: (details) {
+                    print(details);
+                    widget.positionCallback(details.localPosition.dy);
+                  },
+                  onTapDown: (details) {
+                    print(details);
+                    widget.positionCallback(details.localPosition.dy);
+                  },
+                  child: _column()),
             ),
           ),
         ),

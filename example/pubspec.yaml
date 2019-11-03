@@ -14,6 +14,7 @@ dependencies:
   cupertino_icons: ^0.1.2
 
 dev_dependencies:
+  flutter_slidable: "0.5.4"
   flutter_test:
     sdk: flutter
   faker: ^1.1.1
