@@ -1,3 +1,6 @@
+## 1.0.4
+* Shrink the gesturedetector to not interfere with other widgets such as slidables
+
 ## 1.0.3
 * Fixed screen and side height
 
