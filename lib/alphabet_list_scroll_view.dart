@@ -6,6 +6,23 @@ import 'package:vibration/vibration.dart';
 
 typedef IndexedHeight = double Function(int);
 
+class AlphabetScrollListHeader {
+  final List<Widget> widgetList;
+  final Icon icon;
+  final IndexedHeight indexedHeaderHeight;
+
+  AlphabetScrollListHeader({@required this.widgetList,
+    @required this.icon,
+    @required this.indexedHeaderHeight});
+}
+
+class _SpecialHeaderAlphabet {
+  final String id;
+  final Icon icon;
+
+  _SpecialHeaderAlphabet(this.id, this.icon);
+}
+
 class AlphabetListScrollView extends StatefulWidget {
   final List<String> strList;
   final IndexedHeight indexedHeight;
@@ -13,6 +30,8 @@ class AlphabetListScrollView extends StatefulWidget {
   final TextStyle highlightTextStyle;
   final TextStyle normalTextStyle;
   final bool showPreview;
+  final bool keyboardUsage;
+  final List<AlphabetScrollListHeader> headerWidgetList;
 
   const AlphabetListScrollView(
       {Key key,
@@ -21,7 +40,9 @@ class AlphabetListScrollView extends StatefulWidget {
       this.highlightTextStyle = const TextStyle(color: Colors.red),
       this.normalTextStyle = const TextStyle(color: Colors.black),
       this.showPreview = false,
-      @required this.indexedHeight})
+        this.headerWidgetList = const [],
+        @required this.indexedHeight,
+        this.keyboardUsage = false})
       : super(key: key);
 
   @override
@@ -50,16 +71,28 @@ class _AlphabetListScrollViewState extends State<AlphabetListScrollView> {
   var totalHeight = 0.0;
   var heightList = <double>[];
   double maxLimit = 0;
+  List<_SpecialHeaderAlphabet> specialList = [];
+
+  List<String> strList = [];
 
   _initScrollCallback() {
     Observable(_pixelUpdates.stream).listen((pixels) {
-      var tempSelectedIndex = ((pixels / controller.position.maxScrollExtent) *
-              widget.strList.length)
-          .toInt();
-      if (tempSelectedIndex >= widget.strList.length) {
-        tempSelectedIndex = widget.strList.length - 1;
+      var childLength = strList.length;
+      double maxScrollExtent = controller.position.maxScrollExtent > 0
+          ? controller.position.maxScrollExtent
+          : 1;
+      var tempSelectedIndex =
+      ((pixels / maxScrollExtent) * childLength).toInt();
+      if (tempSelectedIndex >= childLength) {
+        tempSelectedIndex = childLength - 1;
       }
-      var mapKey = widget.strList[tempSelectedIndex][0].toUpperCase();
+      String mapKey;
+      if (strList[tempSelectedIndex].contains(RegExp("^x\\d\$"))) {
+        mapKey = (strList[tempSelectedIndex]);
+      } else {
+        mapKey = strList[tempSelectedIndex][0].toUpperCase();
+      }
+
       if (tempSelectedIndex != selectedIndex && selectedChar != mapKey) {
         var tempIndex = alphabetList.indexOf(mapKey);
 
@@ -78,11 +111,29 @@ class _AlphabetListScrollViewState extends State<AlphabetListScrollView> {
     _initList();
     WidgetsBinding.instance.addPostFrameCallback(_afterLayout);
     super.initState();
+    _updateStrList();
     _initScrollCallback();
     _callback = () {
       _pixelUpdates.add(controller.position.pixels);
     };
     controller.addListener(_callback);
+  }
+
+  _updateStrList() {
+    strList = [];
+    for (var i = 0; i < widget.headerWidgetList.length; i++) {
+      var header = widget.headerWidgetList[i];
+      for (var j = 0; j < header.widgetList.length; j++) {
+        strList.add("x$i");
+      }
+    }
+    strList.addAll(widget.strList);
+  }
+
+  @override
+  void didUpdateWidget(AlphabetListScrollView oldWidget) {
+    _initList();
+    _updateStrList();
   }
 
   _afterLayout(_) {
@@ -97,6 +148,7 @@ class _AlphabetListScrollViewState extends State<AlphabetListScrollView> {
   }
 
   _initList() {
+    alphabetList = [];
     var tempList = widget.strList;
     tempList.sort();
     tempList.sort((a, b) {
@@ -113,6 +165,21 @@ class _AlphabetListScrollViewState extends State<AlphabetListScrollView> {
       }
       return a.compareTo(b);
     });
+    if (widget.headerWidgetList.length > 0) {
+      totalHeight = 0;
+      for (var i = 0; i < widget.headerWidgetList.length; i++) {
+        var header = widget.headerWidgetList[i];
+        var id = "x$i";
+        alphabetList.add(id);
+        heightMap[id] = totalHeight;
+        specialList.add(_SpecialHeaderAlphabet(id, header.icon));
+        double headerHeight = 0;
+        for (var j = 0; j < header.widgetList.length; j++) {
+          headerHeight += header.indexedHeaderHeight(j);
+        }
+        totalHeight += headerHeight;
+      }
+    }
     for (var i = 0; i < tempList.length; i++) {
       var currentStr = tempList[i][0];
       _initAlphabetMap(currentStr, i);
@@ -204,27 +271,71 @@ class _AlphabetListScrollViewState extends State<AlphabetListScrollView> {
     controller.removeListener(_callback);
   }
 
+  List<SliverList> _headerWidgetList() {
+    List<SliverList> sliverList = [];
+    for (var i = 0; i < widget.headerWidgetList.length; i++) {
+      var headerWidget = widget.headerWidgetList[i];
+      List<Widget> widgetList = [];
+      for (var j = 0; j < headerWidget.widgetList.length; j++) {
+        widgetList.add(Container(
+          height: headerWidget.indexedHeaderHeight(j),
+          child: headerWidget.widgetList[j],
+        ));
+      }
+      sliverList.add(SliverList(
+        delegate: SliverChildListDelegate([
+          ...widgetList,
+        ]),
+      ));
+    }
+    return sliverList;
+  }
+
   @override
   Widget build(BuildContext context) {
-    var itemLength = widget.strList.length;
-//    if (widget.hasSearch) {
-//      itemLength += 1;
-//    }
+    Widget textview;
+    if (selectedIndex >= 0) {
+      if (alphabetList[selectedIndex].length > 1) {
+        var header = specialList
+            .firstWhere((sp) => sp.id == alphabetList[selectedIndex]);
+        textview = IconTheme(
+          data: IconThemeData(
+            color: Colors.white,
+            size: 42,
+          ),
+          child: header.icon,
+        );
+      } else {
+        textview = Text(
+          "${alphabetList[selectedIndex]}",
+          style: TextStyle(
+            color: Colors.white,
+            fontSize: 60,
+          ),
+        );
+      }
+    } else {
+      textview = Text("");
+    }
     return Container(
       key: _screenKey,
       child: Stack(
         children: <Widget>[
-          ListView.builder(
+          CustomScrollView(
             key: _mainKey,
             controller: controller,
-            itemCount: widget.strList.length,
-            itemBuilder: (context, index) {
-              var currentIndex = index;
-              return Container(
-                height: widget.indexedHeight(index),
-                child: widget.itemBuilder(context, currentIndex),
-              );
-            },
+            slivers: <Widget>[
+              ..._headerWidgetList(),
+              SliverList(
+                delegate: SliverChildBuilderDelegate((context, index) {
+                  var currentIndex = index;
+                  return Container(
+                    height: widget.indexedHeight(index),
+                    child: widget.itemBuilder(context, currentIndex),
+                  );
+                }, childCount: widget.strList.length),
+              )
+            ],
           ),
           if (widget.showPreview)
             AnimatedOpacity(
@@ -237,24 +348,18 @@ class _AlphabetListScrollViewState extends State<AlphabetListScrollView> {
                     width: 160,
                     height: 160,
                     color: Colors.black54,
-                    child: Center(
-                        child: Text(
-                      selectedIndex >= 0
-                          ? "${alphabetList[selectedIndex]}"
-                          : "",
-                      style: TextStyle(
-                        color: Colors.white,
-                        fontSize: 60,
-                      ),
-                    )),
+                    child: Center(child: textview),
                   ),
                 ),
               ),
             ),
           _AlphabetListScollView(
             insideKey: _sideKey,
+            specialHeader: widget.headerWidgetList.isNotEmpty,
+            specialList: specialList,
             strList: alphabetList,
             selectedIndex: selectedIndex,
+            keyboardUsage: widget.keyboardUsage,
             positionCallback: (position) {
               _currentWidgetIndex(position);
             },
@@ -279,6 +384,9 @@ class _AlphabetListScollView extends StatefulWidget {
   final GlobalKey insideKey;
   final TextStyle highlightTextStyle;
   final TextStyle normalTextStyle;
+  final bool specialHeader;
+  final List<_SpecialHeaderAlphabet> specialList;
+  final bool keyboardUsage;
 
   const _AlphabetListScollView({
     Key key,
@@ -290,6 +398,9 @@ class _AlphabetListScollView extends StatefulWidget {
     this.insideKey,
     this.highlightTextStyle = const TextStyle(color: Colors.red),
     this.normalTextStyle = const TextStyle(color: Colors.black),
+    this.specialHeader = false,
+    this.specialList = const [],
+    this.keyboardUsage,
   }) : super(key: key);
 
   @override
@@ -310,15 +421,32 @@ class _AlphabetListScollViewState extends State<_AlphabetListScollView> {
     List<Widget> charList = [];
 
     for (var x = 0; x < widget.strList.length; x++) {
-      charList.add(Padding(
-        padding: const EdgeInsets.all(2.0),
-        child: Text(
+      Widget textview;
+
+      if (widget.strList[x].length > 1) {
+        var header =
+        widget.specialList.firstWhere((sp) => sp.id == widget.strList[x]);
+        textview = IconTheme(
+          data: IconThemeData(
+            size: 18,
+            color: widget.selectedIndex == x
+                ? widget.highlightTextStyle.color
+                : widget.normalTextStyle.color,
+          ),
+          child: header.icon,
+        );
+      } else {
+        textview = Text(
           widget.strList[x],
           textAlign: TextAlign.justify,
           style: widget.selectedIndex == x
               ? widget.highlightTextStyle
               : widget.normalTextStyle,
-        ),
+        );
+      }
+      charList.add(Padding(
+        padding: const EdgeInsets.all(2.0),
+        child: textview,
       ));
     }
     return charList;
@@ -345,17 +473,32 @@ class _AlphabetListScollViewState extends State<_AlphabetListScollView> {
               key: widget.insideKey,
               child: Padding(
                 padding: const EdgeInsets.all(24.0),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  mainAxisSize: MainAxisSize.min,
-                  children: aToZ(),
-                ),
+                child: _column(),
               ),
             ),
           ),
         ),
       ],
     );
+  }
+
+  Widget _column() {
+    if (!widget.keyboardUsage) {
+      return Column(
+        crossAxisAlignment: CrossAxisAlignment.center,
+        mainAxisAlignment: MainAxisAlignment.center,
+        mainAxisSize: MainAxisSize.min,
+        children: aToZ(),
+      );
+    } else {
+      return SingleChildScrollView(
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.center,
+          mainAxisAlignment: MainAxisAlignment.center,
+          mainAxisSize: MainAxisSize.min,
+          children: aToZ(),
+        ),
+      );
+    }
   }
 }

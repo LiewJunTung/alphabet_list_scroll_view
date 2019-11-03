@@ -16,7 +16,7 @@ dependencies:
 dev_dependencies:
   flutter_test:
     sdk: flutter
-
+  faker: ^1.1.1
   alphabet_list_scroll_view:
     path: ../
 
