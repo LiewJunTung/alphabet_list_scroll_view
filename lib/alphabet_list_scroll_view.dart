@@ -132,6 +132,7 @@ class _AlphabetListScrollViewState extends State<AlphabetListScrollView> {
 
   @override
   void didUpdateWidget(AlphabetListScrollView oldWidget) {
+    super.didUpdateWidget(oldWidget);
     _initList();
     _updateStrList();
   }
@@ -294,7 +295,7 @@ class _AlphabetListScrollViewState extends State<AlphabetListScrollView> {
   @override
   Widget build(BuildContext context) {
     Widget textview;
-    if (selectedIndex >= 0) {
+    if (selectedIndex >= 0 && selectedIndex < alphabetList.length) {
       if (alphabetList[selectedIndex].length > 1) {
         var header = specialList
             .firstWhere((sp) => sp.id == alphabetList[selectedIndex]);

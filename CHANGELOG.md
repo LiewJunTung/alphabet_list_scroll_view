@@ -1,3 +1,10 @@
+## 1.0.1+3
+* Fixed out of range errors
+
+## 1.0.1+2
+* Fixed super
+
+
 ## 1.0.1
 * Added headers
 
