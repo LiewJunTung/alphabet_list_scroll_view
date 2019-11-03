@@ -26,7 +26,7 @@ class _MainAppState extends State<MainApp> {
 
   @override
   void initState() {
-    for (var i = 0; i < 100; i++) {
+    for (var i = 0; i < 10; i++) {
       var name = faker.person.name();
       userList.add(User(name, faker.company.name(), false));
     }
@@ -51,8 +51,9 @@ class _MainAppState extends State<MainApp> {
     strList = [];
     if (searchController.text.isNotEmpty) {
       users.retainWhere((user) =>
-          user.name.toLowerCase().contains(
-              searchController.text.toLowerCase()));
+          user.name
+              .toLowerCase()
+              .contains(searchController.text.toLowerCase()));
     }
     users.forEach((user) {
       if (user.favourite) {

@@ -1,3 +1,6 @@
+## 1.0.2
+* Fixed max range errors
+
 ## 1.0.1+3
 * Fixed out of range errors
 

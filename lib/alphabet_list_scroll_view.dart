@@ -87,6 +87,9 @@ class _AlphabetListScrollViewState extends State<AlphabetListScrollView> {
         tempSelectedIndex = childLength - 1;
       }
       String mapKey;
+      if (tempSelectedIndex < 0 || tempSelectedIndex >= strList.length) {
+        return;
+      }
       if (strList[tempSelectedIndex].contains(RegExp("^x\\d\$"))) {
         mapKey = (strList[tempSelectedIndex]);
       } else {
@@ -134,13 +137,19 @@ class _AlphabetListScrollViewState extends State<AlphabetListScrollView> {
   void didUpdateWidget(AlphabetListScrollView oldWidget) {
     super.didUpdateWidget(oldWidget);
     _initList();
+    _afterLayout("");
     _updateStrList();
   }
 
   _afterLayout(_) {
     _getScreenHeight();
     _getSideSizes();
-    var maxLimit = totalHeight - screenHeight;
+    double maxLimit;
+    if (totalHeight - screenHeight > 0) {
+      maxLimit = totalHeight - screenHeight;
+    } else {
+      maxLimit = 0;
+    }
     heightMap.forEach((k, v) {
       if (v > maxLimit) {
         heightMap[k] = maxLimit;
