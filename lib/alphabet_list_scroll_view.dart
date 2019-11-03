@@ -137,13 +137,11 @@ class _AlphabetListScrollViewState extends State<AlphabetListScrollView> {
   void didUpdateWidget(AlphabetListScrollView oldWidget) {
     super.didUpdateWidget(oldWidget);
     _initList();
-    _afterLayout("");
+    _updateHeightMap();
     _updateStrList();
   }
 
-  _afterLayout(_) {
-    _getScreenHeight();
-    _getSideSizes();
+  _updateHeightMap() {
     double maxLimit;
     if (totalHeight - screenHeight > 0) {
       maxLimit = totalHeight - screenHeight;
@@ -155,6 +153,12 @@ class _AlphabetListScrollViewState extends State<AlphabetListScrollView> {
         heightMap[k] = maxLimit;
       }
     });
+  }
+
+  _afterLayout(_) {
+    _getScreenHeight();
+    _getSideSizes();
+    _updateHeightMap();
   }
 
   _initList() {
@@ -243,6 +247,7 @@ class _AlphabetListScrollViewState extends State<AlphabetListScrollView> {
     if (tempIndex >= alphabetList.length - 1) {
       tempIndex = (alphabetList.length - 1).toDouble();
     }
+
     setState(() {
       selectedIndex = tempIndex.round();
     });

@@ -1,3 +1,6 @@
+## 1.0.3
+* Fixed screen and side height
+
 ## 1.0.2
 * Fixed max range errors
 
