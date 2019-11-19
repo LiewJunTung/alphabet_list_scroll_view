@@ -1,3 +1,6 @@
+## 1.0.5
+* Fixed touch event not register in the middle that is caused by the preview.
+
 ## 1.0.4
 * Shrink the gesturedetector to not interfere with other widgets such as slidables
 

@@ -353,17 +353,19 @@ class _AlphabetListScrollViewState extends State<AlphabetListScrollView> {
             ],
           ),
           if (widget.showPreview)
-            AnimatedOpacity(
-              opacity: _visible ? 1.0 : 0.0,
-              duration: Duration(milliseconds: 500),
-              child: Center(
-                child: ClipRRect(
-                  borderRadius: BorderRadius.all(Radius.circular(30)),
-                  child: Container(
-                    width: 160,
-                    height: 160,
-                    color: Colors.black54,
-                    child: Center(child: textview),
+            IgnorePointer(
+              child: AnimatedOpacity(
+                opacity: _visible ? 1.0 : 0.0,
+                duration: Duration(milliseconds: 500),
+                child: Center(
+                  child: ClipRRect(
+                    borderRadius: BorderRadius.all(Radius.circular(30)),
+                    child: Container(
+                      width: 160,
+                      height: 160,
+                      color: Colors.black54,
+                      child: Center(child: textview),
+                    ),
                   ),
                 ),
               ),
@@ -478,20 +480,18 @@ class _AlphabetListScollViewState extends State<_AlphabetListScollView> {
             child: Padding(
               padding: const EdgeInsets.all(24.0),
               child: GestureDetector(
-                  behavior: HitTestBehavior.translucent,
-                  onPanStart: (details) {
-                    print(details);
-                    widget.positionCallback(details.localPosition.dy);
-                  },
-                  onPanUpdate: (details) {
-                    print(details);
-                    widget.positionCallback(details.localPosition.dy);
-                  },
-                  onTapDown: (details) {
-                    print(details);
-                    widget.positionCallback(details.localPosition.dy);
-                  },
-                  child: _column()),
+                behavior: HitTestBehavior.translucent,
+                onPanStart: (details) {
+                  widget.positionCallback(details.localPosition.dy);
+                },
+                onPanUpdate: (details) {
+                  widget.positionCallback(details.localPosition.dy);
+                },
+                onTapDown: (details) {
+                  widget.positionCallback(details.localPosition.dy);
+                },
+                child: _column(),
+              ),
             ),
           ),
         ),

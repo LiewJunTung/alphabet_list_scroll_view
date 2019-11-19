@@ -1,6 +1,5 @@
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:alphabet_list_scroll_view/alphabet_list_scroll_view.dart';
 
 void main() {
   const MethodChannel channel = MethodChannel('alphabet_list_scroll_view');

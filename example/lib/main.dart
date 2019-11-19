@@ -27,7 +27,7 @@ class _MainAppState extends State<MainApp> {
 
   @override
   void initState() {
-    for (var i = 0; i < 10; i++) {
+    for (var i = 0; i < 100; i++) {
       var name = faker.person.name();
       userList.add(User(name, faker.company.name(), false));
     }
@@ -65,15 +65,11 @@ class _MainAppState extends State<MainApp> {
             secondaryActions: <Widget>[
               IconSlideAction(
                 iconWidget: Icon(Icons.star),
-                onTap: () {
-
-                },
+                onTap: () {},
               ),
               IconSlideAction(
                 iconWidget: Icon(Icons.more_horiz),
-                onTap: () {
-
-                },
+                onTap: () {},
               ),
             ],
             child: ListTile(
@@ -107,15 +103,11 @@ class _MainAppState extends State<MainApp> {
             secondaryActions: <Widget>[
               IconSlideAction(
                 iconWidget: Icon(Icons.star),
-                onTap: () {
-
-                },
+                onTap: () {},
               ),
               IconSlideAction(
                 iconWidget: Icon(Icons.more_horiz),
-                onTap: () {
-
-                },
+                onTap: () {},
               ),
             ],
             child: ListTile(
