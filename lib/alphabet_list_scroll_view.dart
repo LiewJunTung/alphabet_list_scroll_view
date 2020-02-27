@@ -76,13 +76,13 @@ class _AlphabetListScrollViewState extends State<AlphabetListScrollView> {
   List<String> strList = [];
 
   _initScrollCallback() {
-    Observable(_pixelUpdates.stream).listen((pixels) {
+    _pixelUpdates.stream.listen((pixels) {
       var childLength = strList.length;
       double maxScrollExtent = controller.position.maxScrollExtent > 0
           ? controller.position.maxScrollExtent
           : 1;
       var tempSelectedIndex =
-      ((pixels / maxScrollExtent) * childLength).toInt();
+          ((pixels / maxScrollExtent) * childLength).toInt();
       if (tempSelectedIndex >= childLength) {
         tempSelectedIndex = childLength - 1;
       }

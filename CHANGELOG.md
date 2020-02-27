@@ -1,3 +1,6 @@
+## 1.0.6
+Updated RxDart to 0.23.1
+
 ## 1.0.5
 * Fixed touch event not register in the middle that is caused by the preview.
 

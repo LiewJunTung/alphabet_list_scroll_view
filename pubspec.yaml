@@ -1,6 +1,6 @@
 name: alphabet_list_scroll_view
 description: A customizable listview with A-Z side scrollbar to fast jump to the item of the selected character.
-version: 1.0.5
+version: 1.0.6
 author: Liew Jun Tung <liewjuntung@gmail.com>
 homepage: https://github.com/LiewJunTung/alphabet_list_scroll_view
 
@@ -10,8 +10,8 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
-  vibration: ^1.2.1
-  rxdart: ^0.22.3
+  vibration: ^1.2.4
+  rxdart: ^0.23.1
 
 dev_dependencies:
   flutter_test:
