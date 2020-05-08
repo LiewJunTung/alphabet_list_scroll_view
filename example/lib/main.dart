@@ -6,11 +6,10 @@ import 'package:flutter_slidable/flutter_slidable.dart';
 void main() => runApp(MainApp());
 
 class User {
+  User(this.name, this.company, this.favourite);
   final String name;
   final String company;
   final bool favourite;
-
-  User(this.name, this.company, this.favourite);
 }
 
 class MainApp extends StatefulWidget {
@@ -19,24 +18,24 @@ class MainApp extends StatefulWidget {
 }
 
 class _MainAppState extends State<MainApp> {
-  List<User> userList = [];
-  List<String> strList = [];
-  List<Widget> favouriteList = [];
-  List<Widget> normalList = [];
+  List<User> userList = <User>[];
+  List<String> strList = <String>[];
+  List<Widget> favouriteList = <Widget>[];
+  List<Widget> normalList = <Widget>[];
   TextEditingController searchController = TextEditingController();
 
   @override
   void initState() {
-    for (var i = 0; i < 100; i++) {
-      var name = faker.person.name();
+    for (int i = 0; i < 100; i++) {
+      final String name = faker.person.name();
       userList.add(User(name, faker.company.name(), false));
     }
-    for (var i = 0; i < 4; i++) {
-      var name = faker.person.name();
+    for (int i = 0; i < 4; i++) {
+      final String name = faker.person.name();
       userList.add(User(name, faker.company.name(), true));
     }
-    userList
-        .sort((a, b) => a.name.toLowerCase().compareTo(b.name.toLowerCase()));
+    userList.sort((User a, User b) =>
+        a.name.toLowerCase().compareTo(b.name.toLowerCase()));
     filterList();
     searchController.addListener(() {
       filterList();
@@ -44,23 +43,22 @@ class _MainAppState extends State<MainApp> {
     super.initState();
   }
 
-  filterList() {
-    List<User> users = [];
+  void filterList() {
+    final List<User> users = <User>[];
     users.addAll(userList);
-    favouriteList = [];
-    normalList = [];
-    strList = [];
+    favouriteList = <Slidable>[];
+    normalList = <Slidable>[];
+    strList = <String>[];
     if (searchController.text.isNotEmpty) {
-      users.retainWhere((user) =>
-          user.name
-              .toLowerCase()
-              .contains(searchController.text.toLowerCase()));
+      users.retainWhere((User user) => user.name
+          .toLowerCase()
+          .contains(searchController.text.toLowerCase()));
     }
-    users.forEach((user) {
+    for (final User user in users) {
       if (user.favourite) {
         favouriteList.add(
           Slidable(
-            actionPane: SlidableDrawerActionPane(),
+            actionPane: const SlidableDrawerActionPane(),
             actionExtentRatio: 0.25,
             secondaryActions: <Widget>[
               IconSlideAction(
@@ -75,9 +73,9 @@ class _MainAppState extends State<MainApp> {
             child: ListTile(
               leading: Stack(
                 children: <Widget>[
-                  CircleAvatar(
+                  const CircleAvatar(
                     backgroundImage:
-                    NetworkImage("http://placeimg.com/200/200/people"),
+                        NetworkImage('http://placeimg.com/200/200/people'),
                   ),
                   Container(
                       height: 40,
@@ -98,7 +96,7 @@ class _MainAppState extends State<MainApp> {
       } else {
         normalList.add(
           Slidable(
-            actionPane: SlidableDrawerActionPane(),
+            actionPane: const SlidableDrawerActionPane(),
             actionExtentRatio: 0.25,
             secondaryActions: <Widget>[
               IconSlideAction(
@@ -111,9 +109,9 @@ class _MainAppState extends State<MainApp> {
               ),
             ],
             child: ListTile(
-              leading: CircleAvatar(
+              leading: const CircleAvatar(
                 backgroundImage:
-                NetworkImage("http://placeimg.com/200/200/people"),
+                    NetworkImage('http://placeimg.com/200/200/people'),
               ),
               title: Text(user.name),
               subtitle: Text(user.company),
@@ -122,13 +120,13 @@ class _MainAppState extends State<MainApp> {
         );
         strList.add(user.name);
       }
-    });
+    }
 
     setState(() {
-      strList;
-      favouriteList;
-      normalList;
-      strList;
+      strList = strList;
+      favouriteList = favouriteList;
+      normalList = normalList;
+      strList = strList;
     });
   }
 
@@ -139,50 +137,49 @@ class _MainAppState extends State<MainApp> {
 
   @override
   Widget build(BuildContext context) {
-    var currentStr = "";
     return MaterialApp(
         home: Scaffold(
-          appBar: AppBar(
-            title: const Text('Plugin example app'),
-          ),
-          body: AlphabetListScrollView(
-            strList: strList,
-            highlightTextStyle: TextStyle(
-              color: Colors.yellow,
-            ),
-            showPreview: true,
-            itemBuilder: (context, index) {
-              return normalList[index];
-            },
-            indexedHeight: (i) {
-              return 80;
-            },
-            keyboardUsage: true,
-            headerWidgetList: <AlphabetScrollListHeader>[
-              AlphabetScrollListHeader(widgetList: [
-                Padding(
-                  padding: const EdgeInsets.all(16.0),
-                  child: TextFormField(
-                    controller: searchController,
-                    decoration: InputDecoration(
-                      border: OutlineInputBorder(),
-                      suffix: Icon(
-                        Icons.search,
-                        color: Colors.grey,
-                      ),
-                      labelText: "Search",
-                    ),
+      appBar: AppBar(
+        title: const Text('Plugin example app'),
+      ),
+      body: AlphabetListScrollView(
+        strList: strList,
+        highlightTextStyle: TextStyle(
+          color: Colors.yellow,
+        ),
+        showPreview: true,
+        itemBuilder: (BuildContext context, int index) {
+          return normalList[index];
+        },
+        indexedHeight: (int i) {
+          return 80;
+        },
+        keyboardUsage: true,
+        headerWidgetList: <AlphabetScrollListHeader>[
+          AlphabetScrollListHeader(widgetList: <Widget>[
+            Padding(
+              padding: const EdgeInsets.all(16.0),
+              child: TextFormField(
+                controller: searchController,
+                decoration: InputDecoration(
+                  border: const OutlineInputBorder(),
+                  suffix: Icon(
+                    Icons.search,
+                    color: Colors.grey,
                   ),
-                )
-              ], icon: Icon(Icons.search), indexedHeaderHeight: (index) => 80),
-              AlphabetScrollListHeader(
-                  widgetList: favouriteList,
-                  icon: Icon(Icons.star),
-                  indexedHeaderHeight: (index) {
-                    return 80;
-                  }),
-            ],
-          ),
-        ));
+                  labelText: 'Search',
+                ),
+              ),
+            )
+          ], icon: Icon(Icons.search), indexedHeaderHeight: (int index) => 80),
+          AlphabetScrollListHeader(
+              widgetList: favouriteList,
+              icon: Icon(Icons.star),
+              indexedHeaderHeight: (int index) {
+                return 80;
+              }),
+        ],
+      ),
+    ));
   }
 }
