@@ -150,6 +150,7 @@ class _MainAppState extends State<MainApp> {
             highlightTextStyle: TextStyle(
               color: Colors.yellow,
             ),
+            useVibration: true,
             showPreview: true,
             itemBuilder: (context, index) {
               return normalList[index];
