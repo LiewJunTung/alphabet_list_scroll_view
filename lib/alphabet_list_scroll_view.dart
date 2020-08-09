@@ -1,7 +1,6 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
-import 'package:rxdart/rxdart.dart';
 import 'package:vibration/vibration.dart';
 
 typedef IndexedHeight = double Function(int);
@@ -164,6 +163,7 @@ class _AlphabetListScrollViewState extends State<AlphabetListScrollView> {
   }
 
   _initList() {
+    _currentAlphabet = "";
     alphabetList = [];
     var tempList = widget.strList;
     tempList.sort();
@@ -205,6 +205,7 @@ class _AlphabetListScrollViewState extends State<AlphabetListScrollView> {
   String _currentAlphabet = "";
 
   _initAlphabetMap(String currentStr, int i) {
+
     var currentHeight = widget.indexedHeight(i);
     if (_currentAlphabet == "#") {
       return;
