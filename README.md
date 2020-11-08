@@ -1,3 +1,5 @@
+Apologize for the lack of updates as I do not have the bandwidth to work on this. But please check out this project https://github.com/flutterchina/azlistview if you need an A-Z list view.
+
 # Alphabet List Scroll View
 A customizable listview with A-Z side scrollbar to fast jump to the item of the selected character.
 Quick scroll through list via dragging through alphabets. 
