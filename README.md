@@ -12,6 +12,7 @@ Quick scroll through list via dragging through alphabets.
 | highlightTextStyle | bool | false | highlight the focused pin box. |
 | normalTextStyle | Color | Colors.black | Set color of the focused pin box. |
 | showPreview | bool | true | show preview on screen |
+| useVibration | bool | true | controls the use of vibration |
 | keyboardUsage | bool | true | The alphabet list will be wrapped in scrollview. |
 | indexedHeight | double Function(int) | query the height of widget with index |  |
 | headerWidgetList | List<AlphabetScrollListHeader> | headers |  |

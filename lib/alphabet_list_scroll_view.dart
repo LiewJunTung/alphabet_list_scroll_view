@@ -1,7 +1,6 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
-import 'package:rxdart/rxdart.dart';
 import 'package:vibration/vibration.dart';
 
 typedef IndexedHeight = double Function(int);
@@ -30,6 +29,7 @@ class AlphabetListScrollView extends StatefulWidget {
   final TextStyle highlightTextStyle;
   final TextStyle normalTextStyle;
   final bool showPreview;
+  final bool useVibration;
   final bool keyboardUsage;
   final List<AlphabetScrollListHeader> headerWidgetList;
 
@@ -40,6 +40,7 @@ class AlphabetListScrollView extends StatefulWidget {
       this.highlightTextStyle = const TextStyle(color: Colors.red),
       this.normalTextStyle = const TextStyle(color: Colors.black),
       this.showPreview = false,
+      this.useVibration = true,
         this.headerWidgetList = const [],
         @required this.indexedHeight,
         this.keyboardUsage = false})
@@ -162,6 +163,7 @@ class _AlphabetListScrollViewState extends State<AlphabetListScrollView> {
   }
 
   _initList() {
+    _currentAlphabet = "";
     alphabetList = [];
     var tempList = widget.strList;
     tempList.sort();
@@ -203,6 +205,7 @@ class _AlphabetListScrollViewState extends State<AlphabetListScrollView> {
   String _currentAlphabet = "";
 
   _initAlphabetMap(String currentStr, int i) {
+
     var currentHeight = widget.indexedHeight(i);
     if (_currentAlphabet == "#") {
       return;
@@ -269,7 +272,7 @@ class _AlphabetListScrollViewState extends State<AlphabetListScrollView> {
   }
 
   _select(int index) async {
-    if (await Vibration.hasVibrator()) {
+    if (widget.useVibration && await Vibration.hasVibrator()) {
       Vibration.vibrate(duration: 20);
     }
     var height = heightMap[alphabetList[index]];
