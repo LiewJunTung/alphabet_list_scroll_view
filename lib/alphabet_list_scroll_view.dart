@@ -31,6 +31,7 @@ class AlphabetListScrollView extends StatefulWidget {
   final TextStyle normalTextStyle;
   final bool showPreview;
   final bool keyboardUsage;
+  final bool showWhenNoScroll;
   final List<AlphabetScrollListHeader> headerWidgetList;
 
   const AlphabetListScrollView(
@@ -42,7 +43,8 @@ class AlphabetListScrollView extends StatefulWidget {
       this.showPreview = false,
         this.headerWidgetList = const [],
         @required this.indexedHeight,
-        this.keyboardUsage = false})
+        this.keyboardUsage = false,
+        this.showWhenNoScroll = true})
       : super(key: key);
 
   @override
@@ -71,6 +73,7 @@ class _AlphabetListScrollViewState extends State<AlphabetListScrollView> {
   var totalHeight = 0.0;
   var heightList = <double>[];
   double maxLimit = 0;
+  bool fitsOnScreen = false;
   List<_SpecialHeaderAlphabet> specialList = [];
 
   List<String> strList = [];
@@ -145,8 +148,10 @@ class _AlphabetListScrollViewState extends State<AlphabetListScrollView> {
     double maxLimit;
     if (totalHeight - screenHeight > 0) {
       maxLimit = totalHeight - screenHeight;
+      fitsOnScreen = false;
     } else {
       maxLimit = 0;
+      fitsOnScreen = true;
     }
     heightMap.forEach((k, v) {
       if (v > maxLimit) {
@@ -352,7 +357,7 @@ class _AlphabetListScrollViewState extends State<AlphabetListScrollView> {
               )
             ],
           ),
-          if (widget.showPreview)
+          if (widget.showPreview && (widget.showWhenNoScroll || !fitsOnScreen))
             IgnorePointer(
               child: AnimatedOpacity(
                 opacity: _visible ? 1.0 : 0.0,
@@ -370,7 +375,8 @@ class _AlphabetListScrollViewState extends State<AlphabetListScrollView> {
                 ),
               ),
             ),
-          _AlphabetListScollView(
+          if (widget.showWhenNoScroll || !fitsOnScreen)
+            _AlphabetListScollView(
             insideKey: _sideKey,
             specialHeader: widget.headerWidgetList.isNotEmpty,
             specialList: specialList,
