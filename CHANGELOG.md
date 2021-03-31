@@ -1,3 +1,6 @@
+## 2.0.0
+refactor!: Updated to Flutter 2. Support Null safetly
+
 ## 1.0.6
 Updated RxDart to 0.23.1
 
