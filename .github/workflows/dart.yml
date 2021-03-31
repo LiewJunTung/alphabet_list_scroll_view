@@ -1,8 +1,8 @@
 name: Publish package to pub.dev
 on:
   push:
-    branches:   
-      - master
+    tags:   
+      - '**'
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -26,7 +26,3 @@ jobs:
       run: sed -i "s/version=.*/version:${GITHUB_REF}/g" pubspec.yaml
     - name: Publish package
       run: pub publish -f
-    on:
-      create:
-        tags:
-        - '**'
