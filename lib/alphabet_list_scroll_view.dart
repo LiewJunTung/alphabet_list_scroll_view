@@ -1,7 +1,6 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
-import 'package:rxdart/rxdart.dart';
 import 'package:vibration/vibration.dart';
 
 typedef IndexedHeight = double Function(int);
@@ -11,9 +10,10 @@ class AlphabetScrollListHeader {
   final Icon icon;
   final IndexedHeight indexedHeaderHeight;
 
-  AlphabetScrollListHeader({@required this.widgetList,
-    @required this.icon,
-    @required this.indexedHeaderHeight});
+  AlphabetScrollListHeader(
+      {required this.widgetList,
+      required this.icon,
+      required this.indexedHeaderHeight});
 }
 
 class _SpecialHeaderAlphabet {
@@ -26,7 +26,7 @@ class _SpecialHeaderAlphabet {
 class AlphabetListScrollView extends StatefulWidget {
   final List<String> strList;
   final IndexedHeight indexedHeight;
-  final IndexedWidgetBuilder itemBuilder;
+  final IndexedWidgetBuilder? itemBuilder;
   final TextStyle highlightTextStyle;
   final TextStyle normalTextStyle;
   final bool showPreview;
@@ -34,15 +34,15 @@ class AlphabetListScrollView extends StatefulWidget {
   final List<AlphabetScrollListHeader> headerWidgetList;
 
   const AlphabetListScrollView(
-      {Key key,
-      @required this.strList,
+      {Key? key,
+      required this.strList,
       this.itemBuilder,
       this.highlightTextStyle = const TextStyle(color: Colors.red),
       this.normalTextStyle = const TextStyle(color: Colors.black),
       this.showPreview = false,
-        this.headerWidgetList = const [],
-        @required this.indexedHeight,
-        this.keyboardUsage = false})
+      this.headerWidgetList = const [],
+      required this.indexedHeight,
+      this.keyboardUsage = false})
       : super(key: key);
 
   @override
@@ -53,7 +53,7 @@ class _AlphabetListScrollViewState extends State<AlphabetListScrollView> {
   List<String> alphabetList = [];
 
   var controller = ScrollController();
-  VoidCallback _callback;
+  late VoidCallback _callback;
   GlobalKey _screenKey = GlobalKey();
   GlobalKey _mainKey = GlobalKey();
   GlobalKey _sideKey = GlobalKey();
@@ -65,7 +65,7 @@ class _AlphabetListScrollViewState extends State<AlphabetListScrollView> {
   Map<String, double> heightMap = {};
   int savedIndex = 0;
   bool isXFlag = false;
-  Timer _debounce;
+  Timer? _debounce;
   bool _visible = false;
   final _pixelUpdates = StreamController<double>();
   var totalHeight = 0.0;
@@ -112,7 +112,7 @@ class _AlphabetListScrollViewState extends State<AlphabetListScrollView> {
   @override
   void initState() {
     _initList();
-    WidgetsBinding.instance.addPostFrameCallback(_afterLayout);
+    WidgetsBinding.instance!.addPostFrameCallback(_afterLayout);
     super.initState();
     _updateStrList();
     _initScrollCallback();
@@ -223,13 +223,15 @@ class _AlphabetListScrollViewState extends State<AlphabetListScrollView> {
   }
 
   _getSideSizes() {
-    final RenderBox renderBoxRed = _sideKey.currentContext.findRenderObject();
+    final RenderBox renderBoxRed =
+        _sideKey.currentContext!.findRenderObject() as RenderBox;
     final sizeRed = renderBoxRed.size;
     sideHeight = sizeRed.height;
   }
 
   _getScreenHeight() {
-    final RenderBox renderBoxRed = _mainKey.currentContext.findRenderObject();
+    final RenderBox renderBoxRed =
+        _mainKey.currentContext!.findRenderObject() as RenderBox;
     final sizeRed = renderBoxRed.size;
     screenHeight = sizeRed.height;
   }
@@ -256,7 +258,7 @@ class _AlphabetListScrollViewState extends State<AlphabetListScrollView> {
       savedIndex = selectedIndex;
       _select(selectedIndex);
 
-      if (_debounce?.isActive ?? false) _debounce.cancel();
+      if (_debounce?.isActive ?? false) _debounce!.cancel();
       _debounce = Timer(const Duration(milliseconds: 500), () {
         setState(() {
           _visible = false;
@@ -269,10 +271,10 @@ class _AlphabetListScrollViewState extends State<AlphabetListScrollView> {
   }
 
   _select(int index) async {
-    if (await Vibration.hasVibrator()) {
+    if (await (Vibration.hasVibrator() as FutureOr<bool>)) {
       Vibration.vibrate(duration: 20);
     }
-    var height = heightMap[alphabetList[index]];
+    var height = heightMap[alphabetList[index]]!;
     controller.jumpTo(height);
 //    controller.scrollToIndex(
 //      strMap[alphabetList[index]],
@@ -346,7 +348,7 @@ class _AlphabetListScrollViewState extends State<AlphabetListScrollView> {
                   var currentIndex = index;
                   return Container(
                     height: widget.indexedHeight(index),
-                    child: widget.itemBuilder(context, currentIndex),
+                    child: widget.itemBuilder!(context, currentIndex),
                   );
                 }, childCount: widget.strList.length),
               )
@@ -393,20 +395,20 @@ typedef AlphabetCallback = Function(int, String);
 typedef DoubleCallback = Function(double);
 
 class _AlphabetListScollView extends StatefulWidget {
-  final AlphabetCallback callback;
-  final DoubleCallback positionCallback;
-  final List<String> strList;
-  final Widget child;
-  final int selectedIndex;
-  final GlobalKey insideKey;
+  final AlphabetCallback? callback;
+  final DoubleCallback? positionCallback;
+  final List<String>? strList;
+  final Widget? child;
+  final int? selectedIndex;
+  final GlobalKey? insideKey;
   final TextStyle highlightTextStyle;
   final TextStyle normalTextStyle;
   final bool specialHeader;
   final List<_SpecialHeaderAlphabet> specialList;
-  final bool keyboardUsage;
+  final bool? keyboardUsage;
 
   const _AlphabetListScollView({
-    Key key,
+    Key? key,
     this.callback,
     this.strList,
     this.child,
@@ -437,12 +439,12 @@ class _AlphabetListScollViewState extends State<_AlphabetListScollView> {
   List<Widget> aToZ() {
     List<Widget> charList = [];
 
-    for (var x = 0; x < widget.strList.length; x++) {
+    for (var x = 0; x < widget.strList!.length; x++) {
       Widget textview;
 
-      if (widget.strList[x].length > 1) {
+      if (widget.strList![x].length > 1) {
         var header =
-        widget.specialList.firstWhere((sp) => sp.id == widget.strList[x]);
+            widget.specialList.firstWhere((sp) => sp.id == widget.strList![x]);
         textview = IconTheme(
           data: IconThemeData(
             size: 18,
@@ -454,7 +456,7 @@ class _AlphabetListScollViewState extends State<_AlphabetListScollView> {
         );
       } else {
         textview = Text(
-          widget.strList[x],
+          widget.strList![x],
           textAlign: TextAlign.justify,
           style: widget.selectedIndex == x
               ? widget.highlightTextStyle
@@ -482,13 +484,13 @@ class _AlphabetListScollViewState extends State<_AlphabetListScollView> {
               child: GestureDetector(
                 behavior: HitTestBehavior.translucent,
                 onPanStart: (details) {
-                  widget.positionCallback(details.localPosition.dy);
+                  widget.positionCallback!(details.localPosition.dy);
                 },
                 onPanUpdate: (details) {
-                  widget.positionCallback(details.localPosition.dy);
+                  widget.positionCallback!(details.localPosition.dy);
                 },
                 onTapDown: (details) {
-                  widget.positionCallback(details.localPosition.dy);
+                  widget.positionCallback!(details.localPosition.dy);
                 },
                 child: _column(),
               ),
@@ -500,7 +502,7 @@ class _AlphabetListScollViewState extends State<_AlphabetListScollView> {
   }
 
   Widget _column() {
-    if (!widget.keyboardUsage) {
+    if (!widget.keyboardUsage!) {
       return Column(
         crossAxisAlignment: CrossAxisAlignment.center,
         mainAxisAlignment: MainAxisAlignment.center,

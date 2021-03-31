@@ -1,9 +1,16 @@
 import 'package:alphabet_list_scroll_view/alphabet_list_scroll_view.dart';
-import 'package:faker/faker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 
 void main() => runApp(MainApp());
+
+String getRandomName() {
+  final List<String> preFix = ['Aa', 'bo', 'Ce', 'Do', 'Ha', 'Tu', 'Zu'];
+  final List<String> surFix = ['sad', 'bad', 'lad', 'nad', 'kat', 'pat', 'my'];
+  preFix.shuffle();
+  surFix.shuffle();
+  return '${preFix.first}${surFix.first}';
+}
 
 class User {
   final String name;
@@ -27,13 +34,11 @@ class _MainAppState extends State<MainApp> {
 
   @override
   void initState() {
-    for (var i = 0; i < 100; i++) {
-      var name = faker.person.name();
-      userList.add(User(name, faker.company.name(), false));
+    for (var i = 0; i < 26; i++) {
+      userList.add(User(getRandomName(), getRandomName(), false));
     }
     for (var i = 0; i < 4; i++) {
-      var name = faker.person.name();
-      userList.add(User(name, faker.company.name(), true));
+      userList.add(User(getRandomName(), getRandomName(), true));
     }
     userList
         .sort((a, b) => a.name.toLowerCase().compareTo(b.name.toLowerCase()));
@@ -51,10 +56,9 @@ class _MainAppState extends State<MainApp> {
     normalList = [];
     strList = [];
     if (searchController.text.isNotEmpty) {
-      users.retainWhere((user) =>
-          user.name
-              .toLowerCase()
-              .contains(searchController.text.toLowerCase()));
+      users.retainWhere((user) => user.name
+          .toLowerCase()
+          .contains(searchController.text.toLowerCase()));
     }
     users.forEach((user) {
       if (user.favourite) {
@@ -77,7 +81,7 @@ class _MainAppState extends State<MainApp> {
                 children: <Widget>[
                   CircleAvatar(
                     backgroundImage:
-                    NetworkImage("http://placeimg.com/200/200/people"),
+                        NetworkImage("https://placeimg.com/200/200/people"),
                   ),
                   Container(
                       height: 40,
@@ -113,7 +117,7 @@ class _MainAppState extends State<MainApp> {
             child: ListTile(
               leading: CircleAvatar(
                 backgroundImage:
-                NetworkImage("http://placeimg.com/200/200/people"),
+                    NetworkImage("https://placeimg.com/200/200/people"),
               ),
               title: Text(user.name),
               subtitle: Text(user.company),
@@ -124,12 +128,7 @@ class _MainAppState extends State<MainApp> {
       }
     });
 
-    setState(() {
-      strList;
-      favouriteList;
-      normalList;
-      strList;
-    });
+    setState(() {});
   }
 
   @override
@@ -139,50 +138,49 @@ class _MainAppState extends State<MainApp> {
 
   @override
   Widget build(BuildContext context) {
-    var currentStr = "";
     return MaterialApp(
         home: Scaffold(
-          appBar: AppBar(
-            title: const Text('Plugin example app'),
-          ),
-          body: AlphabetListScrollView(
-            strList: strList,
-            highlightTextStyle: TextStyle(
-              color: Colors.yellow,
-            ),
-            showPreview: true,
-            itemBuilder: (context, index) {
-              return normalList[index];
-            },
-            indexedHeight: (i) {
-              return 80;
-            },
-            keyboardUsage: true,
-            headerWidgetList: <AlphabetScrollListHeader>[
-              AlphabetScrollListHeader(widgetList: [
-                Padding(
-                  padding: const EdgeInsets.all(16.0),
-                  child: TextFormField(
-                    controller: searchController,
-                    decoration: InputDecoration(
-                      border: OutlineInputBorder(),
-                      suffix: Icon(
-                        Icons.search,
-                        color: Colors.grey,
-                      ),
-                      labelText: "Search",
-                    ),
+      appBar: AppBar(
+        title: const Text('Plugin example app'),
+      ),
+      body: AlphabetListScrollView(
+        strList: strList,
+        highlightTextStyle: TextStyle(
+          color: Colors.yellow,
+        ),
+        showPreview: true,
+        itemBuilder: (context, index) {
+          return normalList[index];
+        },
+        indexedHeight: (i) {
+          return 80;
+        },
+        keyboardUsage: true,
+        headerWidgetList: <AlphabetScrollListHeader>[
+          AlphabetScrollListHeader(widgetList: [
+            Padding(
+              padding: const EdgeInsets.all(16.0),
+              child: TextFormField(
+                controller: searchController,
+                decoration: InputDecoration(
+                  border: OutlineInputBorder(),
+                  suffix: Icon(
+                    Icons.search,
+                    color: Colors.grey,
                   ),
-                )
-              ], icon: Icon(Icons.search), indexedHeaderHeight: (index) => 80),
-              AlphabetScrollListHeader(
-                  widgetList: favouriteList,
-                  icon: Icon(Icons.star),
-                  indexedHeaderHeight: (index) {
-                    return 80;
-                  }),
-            ],
-          ),
-        ));
+                  labelText: "Search",
+                ),
+              ),
+            )
+          ], icon: Icon(Icons.search), indexedHeaderHeight: (index) => 80),
+          AlphabetScrollListHeader(
+              widgetList: favouriteList,
+              icon: Icon(Icons.star),
+              indexedHeaderHeight: (index) {
+                return 80;
+              }),
+        ],
+      ),
+    ));
   }
 }
