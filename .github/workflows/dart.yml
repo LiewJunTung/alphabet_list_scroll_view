@@ -23,7 +23,7 @@ jobs:
         }
         EOF
     - name: Update pubspec version to tag
-      run: sed -i "s/version=.*/version:${{ GITHUB_REF }}/g" pubspec.yaml
+      run: sed -i "s/version=.*/version:${GITHUB_REF}/g" pubspec.yaml
     - name: Publish package
       run: pub publish -f
     on:
