@@ -3,7 +3,7 @@ description: Demonstrates how to use the alphabet_list_scroll_view plugin.
 publish_to: 'none'
 
 environment:
-  sdk: ">=2.2.2 <3.0.0"
+  sdk: ">=2.12.0 <3.0.0"
 
 dependencies:
   flutter:
@@ -11,13 +11,12 @@ dependencies:
 
   # The following adds the Cupertino Icons font to your application.
   # Use with the CupertinoIcons class for iOS style icons.
-  cupertino_icons: ^0.1.2
+  cupertino_icons: ^1.0.2
 
 dev_dependencies:
-  flutter_slidable: "0.5.4"
+  flutter_slidable: ^0.6.0-nullsafety.0
   flutter_test:
     sdk: flutter
-  faker: ^1.1.1
   alphabet_list_scroll_view:
     path: ../
 
