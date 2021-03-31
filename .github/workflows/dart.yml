@@ -22,5 +22,11 @@ jobs:
           "expiration": 1570721159347
         }
         EOF
+    - name: Update pubspec version to tag
+      run: sed -i "s/version=.*/version:${{ GITHUB_REF }}/g" pubspec.yaml
     - name: Publish package
       run: pub publish -f
+    on:
+      create:
+        tags:
+        - '**'
